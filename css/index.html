@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sketchy UI — Component Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sketchy.css">
+</head>
+<body>
+
+<!-- ============================================================
+     SVG DEFS — filter, patterns, icon symbols
+============================================================ -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+
+    <!-- Sketch distortion filter -->
+    <filter id="sk" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- Chart fill patterns -->
+    <pattern id="p-hatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <path d="M0 6 L6 0" stroke="#1a1a1a" stroke-width="1.2"/>
+    </pattern>
+    <pattern id="p-cross" patternUnits="userSpaceOnUse" width="6" height="6">
+      <path d="M0 6 L6 0 M0 0 L6 6" stroke="#1a1a1a" stroke-width="0.8"/>
+    </pattern>
+    <pattern id="p-sparse" patternUnits="userSpaceOnUse" width="10" height="10">
+      <path d="M0 10 L10 0" stroke="#1a1a1a" stroke-width="1"/>
+    </pattern>
+    <pattern id="p-dot" patternUnits="userSpaceOnUse" width="7" height="7">
+      <circle cx="3.5" cy="3.5" r="1.2" fill="#1a1a1a"/>
+    </pattern>
+
+    <!-- Icon: Info (circle i) -->
+    <symbol id="icon-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="9" x2="12" y2="9.5" stroke-width="2.5"/>
+      <line x1="12" y1="12" x2="12" y2="16"/>
+    </symbol>
+
+    <!-- Icon: Warning (triangle !) -->
+    <symbol id="icon-warning" viewBox="0 0 24 24">
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"/>
+    </symbol>
+
+    <!-- Icon: Error (circle ×) -->
+    <symbol id="icon-error" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="15" y1="9" x2="9" y2="15"/>
+      <line x1="9" y1="9" x2="15" y2="15"/>
+    </symbol>
+
+    <!-- Icon: Pencil -->
+    <symbol id="icon-pencil" viewBox="0 0 24 24">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+      <path d="m15 5 4 4"/>
+    </symbol>
+
+    <!-- Icon: Search -->
+    <symbol id="icon-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </symbol>
+
+    <!-- Icon: Sort (both arrows) -->
+    <symbol id="icon-sort" viewBox="0 0 24 24">
+      <path d="m8 9 4-4 4 4" stroke-width="2"/>
+      <path d="m16 15-4 4-4-4" stroke-width="2"/>
+    </symbol>
+
+    <!-- Icon: Sort Asc -->
+    <symbol id="icon-sort-asc" viewBox="0 0 24 24">
+      <path d="m18 15-6-6-6 6" stroke-width="2.5"/>
+    </symbol>
+
+    <!-- Icon: Sort Desc -->
+    <symbol id="icon-sort-desc" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6" stroke-width="2.5"/>
+    </symbol>
+
+    <!-- Icon: Checklist -->
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="M9 11l3 3L22 4"/>
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+    </symbol>
+
+    <!-- Icon: Trash -->
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M3 6h18"/>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/>
+      <line x1="10" y1="11" x2="10" y2="17"/>
+      <line x1="14" y1="11" x2="14" y2="17"/>
+    </symbol>
+
+  </defs>
+</svg>
+
+<div class="page-wrap">
+
+  <!-- ======================================================
+       HERO
+  ====================================================== -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-title">Sketchy UI</div>
+      <br>
+      <div class="hero-sub">a hand-drawn component library &mdash; imperfect by design.</div>
+      <div class="hero-tags">
+        <span class="badge badge-pill badge-filled">No Framework</span>
+        <span class="badge badge-rect">Pure CSS + JS</span>
+        <span class="badge badge-pill">Black &amp; White</span>
+        <span class="badge badge-rect">Human-made</span>
+        <span class="badge badge-pill">
+          <svg class="icon icon-sm"><use href="#icon-pencil"/></svg>
+          Sketchy
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ====================================================
+         01 BUTTONS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 01</div>
+      <div class="section-title">Buttons</div>
+      <div class="row" style="margin-bottom:20px;">
+        <button class="btn">Default</button>
+        <button class="btn btn-solid">Solid</button>
+        <button class="btn btn-hatch">Hatched</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-danger">Danger !</button>
+      </div>
+      <div class="row">
+        <button class="btn btn-sm">Small</button>
+        <button class="btn">Medium</button>
+        <button class="btn btn-lg">Large</button>
+        <button class="btn btn-solid" disabled style="opacity:.4;cursor:not-allowed;">Disabled</button>
+        <button class="btn btn-solid">
+          <svg class="icon icon-sm"><use href="#icon-pencil"/></svg>
+          With Icon
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         02 BADGES
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 02</div>
+      <div class="section-title">Badges &amp; Tags</div>
+      <div class="row" style="align-items:center;">
+        <span class="badge badge-pill">Default</span>
+        <span class="badge badge-pill badge-filled">Filled</span>
+        <span class="badge badge-rect">In Progress</span>
+        <span class="badge badge-rect badge-filled">Done</span>
+        <span class="badge badge-pill">Draft</span>
+        <span class="badge badge-rect">Archived</span>
+        <span class="badge badge-pill badge-filled">New</span>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         03 CARDS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 03</div>
+      <div class="section-title">Cards</div>
+      <div class="row">
+
+        <div class="card card-a">
+          <div class="card-title">Simple Card</div>
+          <div class="card-body">Kartu ini punya goresan yang tidak lurus. Itulah yang membuatnya indah.</div>
+          <div class="card-footer">
+            <button class="btn btn-sm">Read more</button>
+          </div>
+        </div>
+
+        <div class="card card-b">
+          <div class="card-hatched-top">
+            <div class="card-title" style="border:none;padding:0;margin:0;">Hatched Header</div>
+          </div>
+          <div class="card-body">Header diarsir seperti pensil mengisi bidang. Body tetap bersih.</div>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-solid">Action</button>
+          </div>
+        </div>
+
+        <div class="card card-c">
+          <div class="card-body" style="margin-bottom:4px;">
+            <span class="stat-num">2,847</span>
+            <span class="stat-label">total sketches drawn</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <span class="badge badge-pill badge-filled" style="font-size:14px;">+12%</span>
+            <span class="badge badge-pill" style="font-size:14px;">this week</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         04 FORM INPUTS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 04</div>
+      <div class="section-title">Form Inputs</div>
+      <div style="max-width:440px;">
+
+        <div class="form-group">
+          <label class="form-label">Your name</label>
+          <input class="input" type="text" placeholder="write something...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="input" type="email" placeholder="you@paper.com">
+          <span class="form-hint">we won't draw on your inbox.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="input">
+            <option>Pick one...</option>
+            <option>Pencil sketch</option>
+            <option>Charcoal</option>
+            <option>Ink drawing</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="input" placeholder="scribble here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Disabled field</label>
+          <input class="input" type="text" placeholder="can't touch this" disabled>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         05 CHARTS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 05</div>
+      <div class="section-title">Charts</div>
+      <div class="charts-grid">
+
+        <!-- Progress Bars -->
+        <div class="chart-card">
+          <div class="chart-title">Progress</div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Sketching</span><span>72%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Inking</span><span>40%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Scanning</span><span>95%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:95%"></div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Coloring</span><span>18%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:18%"></div></div>
+          </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="chart-card">
+          <div class="chart-title">Component Distribution</div>
+          <svg id="donut-svg" class="chart-svg" viewBox="0 0 200 180"></svg>
+          <div id="donut-legend" class="chart-legend"></div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="chart-card">
+          <div class="chart-title">Monthly Output</div>
+          <svg id="bar-svg" class="chart-svg" viewBox="0 0 300 180"></svg>
+        </div>
+
+        <!-- Line Chart -->
+        <div class="chart-card">
+          <div class="chart-title">Weekly Progress</div>
+          <svg id="line-svg" class="chart-svg" viewBox="0 0 300 180"></svg>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         06 CHECKBOXES & TOGGLES
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 06</div>
+      <div class="section-title">Checkboxes &amp; Toggles</div>
+      <div style="display:flex;gap:64px;flex-wrap:wrap;">
+
+        <div>
+          <div class="check-group" onclick="this.querySelector('.check-box').classList.toggle('checked')">
+            <div class="check-box checked"></div>
+            <span class="check-label">Already done</span>
+          </div>
+          <div class="check-group" onclick="this.querySelector('.check-box').classList.toggle('checked')">
+            <div class="check-box"></div>
+            <span class="check-label">Not yet</span>
+          </div>
+          <div class="check-group" onclick="this.querySelector('.check-box').classList.toggle('checked')">
+            <div class="check-box"></div>
+            <span class="check-label">Maybe later</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="toggle-wrap" onclick="this.querySelector('.toggle-track').classList.toggle('on')">
+            <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+            <span class="check-label">Sketch mode</span>
+          </div>
+          <div class="toggle-wrap" onclick="this.querySelector('.toggle-track').classList.toggle('on')">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <span class="check-label">Dark mode (no)</span>
+          </div>
+          <div class="toggle-wrap" onclick="this.querySelector('.toggle-track').classList.toggle('on')">
+            <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+            <span class="check-label">Show grid</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         07 DATATABLE
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 07</div>
+      <div class="section-title">DataTable</div>
+      <div id="datatable"></div>
+    </section>
+
+    <!-- ====================================================
+         08 ALERTS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 08</div>
+      <div class="section-title">Alerts</div>
+      <div style="max-width:580px;">
+
+        <div class="alert alert-a">
+          <span class="alert-icon">
+            <svg class="icon"><use href="#icon-info"/></svg>
+          </span>
+          <div><strong>Info &mdash;</strong> Ini hanya catatan kecil di pinggir halaman. Tidak perlu khawatir.</div>
+        </div>
+
+        <div class="alert alert-b">
+          <span class="alert-icon">
+            <svg class="icon"><use href="#icon-warning"/></svg>
+          </span>
+          <div><strong>Warning &mdash;</strong> Arsiran ini menandakan sesuatu yang perlu dicatat sebelum melanjutkan.</div>
+        </div>
+
+        <div class="alert alert-c">
+          <span class="alert-icon">
+            <svg class="icon"><use href="#icon-error"/></svg>
+          </span>
+          <div><strong>Error &mdash;</strong> Gambarnya robek. Coba lagi dari awal.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================
+         09 MODAL
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 09</div>
+      <div class="section-title">Modal</div>
+      <div class="row">
+        <button class="btn btn-solid" onclick="openModal('modal1')">Open Modal</button>
+        <button class="btn btn-ghost" onclick="openModal('modal2')">Confirm Dialog</button>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         10 TOOLTIPS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 10</div>
+      <div class="section-title">Tooltips</div>
+      <div class="row" style="align-items:center;gap:24px;">
+        <div class="tooltip-wrap">
+          <button class="btn">Hover for tip</button>
+          <span class="tooltip-box">here is some extra info</span>
+        </div>
+        <div class="tooltip-wrap">
+          <span class="badge badge-pill" style="cursor:default;">what's this?</span>
+          <span class="tooltip-box">a badge with a tooltip</span>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="btn btn-solid">
+            <svg class="icon icon-sm"><use href="#icon-info"/></svg>
+          </button>
+          <span class="tooltip-box">this button does something important</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================
+         11 ICONS
+    ==================================================== -->
+    <section class="section">
+      <div class="section-label">Component 11</div>
+      <div class="section-title">Icons</div>
+
+      <div class="icon-grid">
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-info"/></svg>
+          </div>
+          <div class="icon-card-name">icon-info</div>
+          <div class="icon-card-used">Alerts · Tooltips</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-warning"/></svg>
+          </div>
+          <div class="icon-card-name">icon-warning</div>
+          <div class="icon-card-used">Alerts</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-error"/></svg>
+          </div>
+          <div class="icon-card-name">icon-error</div>
+          <div class="icon-card-used">Alerts · Modal close</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-pencil"/></svg>
+          </div>
+          <div class="icon-card-name">icon-pencil</div>
+          <div class="icon-card-used">Hero · Buttons</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-search"/></svg>
+          </div>
+          <div class="icon-card-name">icon-search</div>
+          <div class="icon-card-used">DataTable</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-sort"/></svg>
+          </div>
+          <div class="icon-card-name">icon-sort</div>
+          <div class="icon-card-used">DataTable · unsorted</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-sort-asc"/></svg>
+          </div>
+          <div class="icon-card-name">icon-sort-asc</div>
+          <div class="icon-card-used">DataTable · A→Z</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-sort-desc"/></svg>
+          </div>
+          <div class="icon-card-name">icon-sort-desc</div>
+          <div class="icon-card-used">DataTable · Z→A</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-check"/></svg>
+          </div>
+          <div class="icon-card-name">icon-check</div>
+          <div class="icon-card-used">Checklist · Done state</div>
+        </div>
+
+        <div class="icon-card">
+          <div class="icon-card-preview">
+            <svg class="icon icon-xl"><use href="#icon-trash"/></svg>
+          </div>
+          <div class="icon-card-name">icon-trash</div>
+          <div class="icon-card-used">Delete · Danger actions</div>
+        </div>
+
+      </div>
+
+      <!-- Size variants -->
+      <div style="margin-bottom:12px;">
+        <span class="section-label" style="display:inline-block;margin-bottom:14px;">Size variants</span>
+      </div>
+      <div class="icon-size-row">
+        <div class="icon-size-item">
+          <svg class="icon icon-xl"><use href="#icon-pencil"/></svg>
+          <span class="icon-size-label">icon-xl · 36px</span>
+        </div>
+        <div class="icon-size-item">
+          <svg class="icon"><use href="#icon-pencil"/></svg>
+          <span class="icon-size-label">icon · 22px</span>
+        </div>
+        <div class="icon-size-item">
+          <svg class="icon icon-sm"><use href="#icon-pencil"/></svg>
+          <span class="icon-size-label">icon-sm · 16px</span>
+        </div>
+      </div>
+
+      <!-- Usage example -->
+      <div style="margin-top:32px;">
+        <span class="section-label" style="display:inline-block;margin-bottom:14px;">Usage in components</span>
+      </div>
+      <div class="row" style="align-items:center;">
+        <button class="btn btn-solid">
+          <svg class="icon icon-sm"><use href="#icon-pencil"/></svg>
+          Edit sketch
+        </button>
+        <button class="btn">
+          <svg class="icon icon-sm"><use href="#icon-search"/></svg>
+          Find
+        </button>
+        <span class="badge badge-pill badge-filled">
+          <svg class="icon icon-sm"><use href="#icon-pencil"/></svg>
+          Sketchy
+        </span>
+        <div class="tooltip-wrap">
+          <button class="btn btn-ghost">
+            <svg class="icon icon-sm"><use href="#icon-info"/></svg>
+            Info
+          </button>
+          <span class="tooltip-box">icon inside tooltip trigger</span>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="footer">
+      drawn with pencil &amp; css &mdash; no pixels were harmed &mdash; 2026
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /page-wrap -->
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+<div class="modal-overlay" id="modal1" onclick="if(event.target===this)closeModal('modal1')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal1')">
+      <svg class="icon icon-sm"><use href="#icon-error"/></svg>
+    </button>
+    <div class="modal-title">A Sketchy Dialog</div>
+    <div class="modal-body">
+      Modal ini sengaja tidak terlalu lurus.<br><br>
+      Karena hidup memang tidak selalu simetris, dan itu tidak apa-apa.
+      Klik di luar atau tekan × untuk menutup.
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal1')">Cancel</button>
+      <button class="btn btn-solid" onclick="closeModal('modal1')">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal2" onclick="if(event.target===this)closeModal('modal2')">
+  <div class="modal" style="transform:rotate(0.4deg);width:420px;">
+    <button class="modal-close" onclick="closeModal('modal2')">
+      <svg class="icon icon-sm"><use href="#icon-error"/></svg>
+    </button>
+    <div class="modal-title" style="font-size:26px;">Are you sure?</div>
+    <div class="modal-body" style="font-size:19px;">
+      Tindakan ini tidak bisa dibatalkan.<br>
+      Seperti goresan pensil yang sudah terlanjur dalam.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeModal('modal2')">Nevermind</button>
+      <button class="btn btn-sm btn-danger" onclick="closeModal('modal2')">Yes, delete it</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCRIPT
+============================================================ -->
+<script>
+'use strict';
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ============================================================
+// SVG HELPERS
+// ============================================================
+const NS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs, parent) {
+  const node = document.createElementNS(NS, tag);
+  if (attrs) Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+  if (parent) parent.appendChild(node);
+  return node;
+}
+
+function txt(content, attrs, parent) {
+  const node = el('text', attrs, parent);
+  node.textContent = content;
+  return node;
+}
+
+// ============================================================
+// DONUT CHART
+// ============================================================
+const DONUT_DATA = [
+  { label: 'Buttons',  value: 42 },
+  { label: 'Cards',    value: 71 },
+  { label: 'Modal',    value: 88 },
+  { label: 'Inputs',   value: 67 },
+  { label: 'Other',    value: 108 },
+];
+
+const CHART_FILLS   = ['#1a1a1a', 'url(#p-hatch)', 'url(#p-cross)', 'url(#p-sparse)', 'url(#p-dot)'];
+const LEGEND_CLS    = ['legend-solid', 'legend-hatch', 'legend-cross', 'legend-sparse', 'legend-empty'];
+
+function toRad(deg) { return (deg - 90) * Math.PI / 180; }
+
+function polar(cx, cy, r, deg) {
+  return [cx + r * Math.cos(toRad(deg)), cy + r * Math.sin(toRad(deg))];
+}
+
+function arcPath(cx, cy, rO, rI, a0, a1) {
+  const [x1, y1] = polar(cx, cy, rO, a0);
+  const [x2, y2] = polar(cx, cy, rO, a1);
+  const [x3, y3] = polar(cx, cy, rI, a1);
+  const [x4, y4] = polar(cx, cy, rI, a0);
+  const lg = (a1 - a0 > 180) ? 1 : 0;
+  return `M${x1},${y1} A${rO},${rO},0,${lg},1,${x2},${y2} L${x3},${y3} A${rI},${rI},0,${lg},0,${x4},${y4}Z`;
+}
+
+function drawDonut() {
+  const svg    = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  const total  = DONUT_DATA.reduce((s, d) => s + d.value, 0);
+  const cx = 100, cy = 90, rO = 68, rI = 42, GAP = 4;
+  let angle = -90;
+
+  DONUT_DATA.forEach((d, i) => {
+    const sweep = (d.value / total) * (360 - GAP * DONUT_DATA.length);
+    const path  = el('path', {
+      d:            arcPath(cx, cy, rO, rI, angle, angle + sweep),
+      fill:         CHART_FILLS[i],
+      stroke:       '#1a1a1a',
+      'stroke-width': '1.5',
+      filter:       'url(#sk)',
+    }, svg);
+    angle += sweep + GAP;
+
+    // Legend item
+    const item   = legend.appendChild(Object.assign(document.createElement('div'), { className: 'legend-item' }));
+    const swatch = item.appendChild(Object.assign(document.createElement('div'), { className: `legend-swatch ${LEGEND_CLS[i]}` }));
+    item.appendChild(Object.assign(document.createElement('span'), { textContent: `${d.label} (${d.value})` }));
+  });
+
+  // Center label
+  txt(total,        { x: cx, y: cy - 4, 'text-anchor': 'middle', 'font-family': 'Caveat, cursive', 'font-size': '26', 'font-weight': '700', fill: '#1a1a1a' }, svg);
+  txt('total lines',{ x: cx, y: cy + 14,'text-anchor': 'middle', 'font-family': 'Caveat, cursive', 'font-size': '13', fill: '#777' }, svg);
+}
+
+// ============================================================
+// BAR CHART
+// ============================================================
+const BAR_DATA = [
+  { label: 'Jan', value: 12 },
+  { label: 'Feb', value: 28 },
+  { label: 'Mar', value: 19 },
+  { label: 'Apr', value: 35 },
+  { label: 'May', value: 24 },
+  { label: 'Jun', value: 41 },
+];
+
+function drawBar() {
+  const svg = document.getElementById('bar-svg');
+  const W = 300, H = 180;
+  const pad = { t: 14, r: 12, b: 32, l: 36 };
+  const pW  = W - pad.l - pad.r;
+  const pH  = H - pad.t - pad.b;
+  const maxV = Math.max(...BAR_DATA.map(d => d.value));
+  const niceMax = Math.ceil(maxV / 10) * 10;
+  const barW    = Math.floor(pW / BAR_DATA.length) - 8;
+  const fills   = ['#1a1a1a','url(#p-hatch)','url(#p-cross)','url(#p-sparse)','url(#p-dot)','#1a1a1a'];
+
+  // Y-axis gridlines + labels
+  [0, 0.5, 1].forEach(t => {
+    const v = Math.round(niceMax * t);
+    const y = pad.t + pH - t * pH;
+    el('line', { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: '#1a1a1a', 'stroke-width': t === 0 ? 0 : 0.8, 'stroke-dasharray': '3 4', opacity: '0.3' }, svg);
+    txt(v, { x: pad.l - 5, y: y + 5, 'text-anchor': 'end', 'font-family': 'Caveat, cursive', 'font-size': '12', fill: '#999' }, svg);
+  });
+
+  // Y-axis line
+  el('line', { x1: pad.l, y1: pad.t, x2: pad.l, y2: H - pad.b, stroke: '#1a1a1a', 'stroke-width': '2' }, svg);
+  // X-axis line
+  el('line', { x1: pad.l, y1: H - pad.b, x2: W - pad.r, y2: H - pad.b, stroke: '#1a1a1a', 'stroke-width': '2' }, svg);
+
+  // Bars
+  BAR_DATA.forEach((d, i) => {
+    const groupX = pad.l + i * (pW / BAR_DATA.length);
+    const x      = groupX + (pW / BAR_DATA.length - barW) / 2;
+    const barH   = (d.value / niceMax) * pH;
+    const y      = pad.t + pH - barH;
+
+    el('rect', {
+      x, y, width: barW, height: barH,
+      fill:         fills[i % fills.length],
+      stroke:       '#1a1a1a',
+      'stroke-width': '1.8',
+      filter:       'url(#sk)',
+      rx: 1, ry: 1,
+    }, svg);
+
+    txt(d.label, { x: x + barW / 2, y: H - pad.b + 18, 'text-anchor': 'middle', 'font-family': 'Caveat, cursive', 'font-size': '13', fill: '#555' }, svg);
+  });
+}
+
+// ============================================================
+// LINE CHART
+// ============================================================
+const LINE_DATA = [8, 15, 11, 22, 18, 30, 24, 38, 32, 45];
+
+function drawLine() {
+  const svg = document.getElementById('line-svg');
+  const W = 300, H = 180;
+  const pad = { t: 14, r: 12, b: 32, l: 36 };
+  const pW  = W - pad.l - pad.r;
+  const pH  = H - pad.t - pad.b;
+  const maxV    = Math.max(...LINE_DATA);
+  const niceMax = Math.ceil(maxV / 10) * 10;
+  const step    = pW / (LINE_DATA.length - 1);
+
+  const points = LINE_DATA.map((v, i) => ({
+    x: pad.l + i * step,
+    y: pad.t + pH - (v / niceMax) * pH,
+  }));
+
+  // Y-axis gridlines
+  [0, 0.5, 1].forEach(t => {
+    const v = Math.round(niceMax * t);
+    const y = pad.t + pH - t * pH;
+    el('line', { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: '#1a1a1a', 'stroke-width': t === 0 ? 0 : 0.8, 'stroke-dasharray': '3 4', opacity: '0.3' }, svg);
+    txt(v, { x: pad.l - 5, y: y + 5, 'text-anchor': 'end', 'font-family': 'Caveat, cursive', 'font-size': '12', fill: '#999' }, svg);
+  });
+
+  // Axes
+  el('line', { x1: pad.l, y1: pad.t, x2: pad.l, y2: H - pad.b, stroke: '#1a1a1a', 'stroke-width': '2' }, svg);
+  el('line', { x1: pad.l, y1: H - pad.b, x2: W - pad.r, y2: H - pad.b, stroke: '#1a1a1a', 'stroke-width': '2' }, svg);
+
+  // X-axis labels (every other)
+  points.forEach((p, i) => {
+    if (i % 2 === 0) {
+      txt(`Wk${i + 1}`, { x: p.x, y: H - pad.b + 18, 'text-anchor': 'middle', 'font-family': 'Caveat, cursive', 'font-size': '12', fill: '#555' }, svg);
+    }
+  });
+
+  // Area fill
+  const areaPoints = [
+    `${points[0].x},${H - pad.b}`,
+    ...points.map(p => `${p.x},${p.y}`),
+    `${points[points.length - 1].x},${H - pad.b}`,
+  ].join(' ');
+  el('polygon', { points: areaPoints, fill: 'url(#p-sparse)', stroke: 'none', opacity: '0.5' }, svg);
+
+  // Line
+  el('polyline', {
+    points:          points.map(p => `${p.x},${p.y}`).join(' '),
+    fill:            'none',
+    stroke:          '#1a1a1a',
+    'stroke-width':  '2.5',
+    'stroke-linejoin': 'round',
+    'stroke-linecap':  'round',
+    filter:          'url(#sk)',
+  }, svg);
+
+  // Data points
+  points.forEach(p => {
+    el('circle', { cx: p.x, cy: p.y, r: '4', fill: '#fafaf8', stroke: '#1a1a1a', 'stroke-width': '2.5', filter: 'url(#sk)' }, svg);
+  });
+}
+
+// ============================================================
+// DATATABLE
+// ============================================================
+const DT_DATA = [
+  { component: 'Button',      status: 'Done',        author: 'Arta', lines: 42,  vibe: 'wobbly'          },
+  { component: 'Card',        status: 'Done',        author: 'Arta', lines: 71,  vibe: 'tilted'          },
+  { component: 'Modal',       status: 'Done',        author: 'Arta', lines: 88,  vibe: 'floating'        },
+  { component: 'Badge',       status: 'Done',        author: 'Arta', lines: 28,  vibe: 'pill-shaped'     },
+  { component: 'Input',       status: 'Done',        author: 'Arta', lines: 45,  vibe: 'focused'         },
+  { component: 'Alert',       status: 'Done',        author: 'Arta', lines: 38,  vibe: 'alarming'        },
+  { component: 'Tooltip',     status: 'Done',        author: 'Arta', lines: 24,  vibe: 'hovery'          },
+  { component: 'Checkbox',    status: 'Done',        author: 'Arta', lines: 29,  vibe: 'ticked'          },
+  { component: 'Toggle',      status: 'Done',        author: 'Arta', lines: 33,  vibe: 'bouncy'          },
+  { component: 'Donut Chart', status: 'Done',        author: 'Arta', lines: 67,  vibe: 'circular'        },
+  { component: 'Bar Chart',   status: 'Done',        author: 'Arta', lines: 52,  vibe: 'rectangular'     },
+  { component: 'Line Chart',  status: 'Done',        author: 'Arta', lines: 61,  vibe: 'wavy'            },
+  { component: 'DataTable',   status: 'Done',        author: 'Arta', lines: 95,  vibe: 'paginated'       },
+  { component: 'Select',      status: 'In Progress', author: 'Arta', lines: 18,  vibe: 'choosy'          },
+  { component: 'Accordion',   status: 'Draft',       author: 'Arta', lines: 0,   vibe: 'collapsing'      },
+  { component: 'Tabs',        status: 'Draft',       author: 'Arta', lines: 0,   vibe: 'switching'       },
+  { component: 'Slider',      status: 'Draft',       author: 'Arta', lines: 0,   vibe: 'draggable'       },
+  { component: 'Breadcrumb',  status: 'Draft',       author: 'Arta', lines: 0,   vibe: 'navigational'    },
+];
+
+const DT_COLS = [
+  { key: 'component', label: 'Component' },
+  { key: 'status',    label: 'Status',   render: v => {
+    const cls = v === 'Done' ? 'badge-pill badge-filled' : v === 'In Progress' ? 'badge-rect' : 'badge-rect';
+    return `<span class="badge ${cls}" style="font-size:14px">${v}</span>`;
+  }},
+  { key: 'author',    label: 'Author'    },
+  { key: 'lines',     label: 'Lines'     },
+  { key: 'vibe',      label: 'Vibe'      },
+];
+
+class SketchyTable {
+  constructor(containerId, data, cols, perPage = 5) {
+    this.el       = document.getElementById(containerId);
+    this.all      = data;
+    this.rows     = [...data];
+    this.cols     = cols;
+    this.page     = 1;
+    this.perPage  = perPage;
+    this.sortKey  = null;
+    this.sortDir  = 1;
+    this._build();
+  }
+
+  _build() {
+    // Outer container
+    const wrap = this._el('div', 'dt-container');
+    this.el.appendChild(wrap);
+
+    // Toolbar
+    const toolbar = this._el('div', 'dt-toolbar');
+    wrap.appendChild(toolbar);
+
+    const searchWrap = this._el('div', '', { style: 'display:flex;align-items:center;gap:8px;' });
+    searchWrap.innerHTML = `<svg class="icon icon-sm" style="flex-shrink:0"><use href="#icon-search"/></svg>`;
+    toolbar.appendChild(searchWrap);
+    const search = this._el('input', 'dt-search', { type: 'text', placeholder: 'Search components...' });
+    search.addEventListener('input', e => this._search(e.target.value));
+    searchWrap.appendChild(search);
+
+    this._infoEl = this._el('span', 'dt-info');
+    toolbar.appendChild(this._infoEl);
+
+    // Table
+    this._table = this._el('table', 'dt-table');
+    wrap.appendChild(this._table);
+    this._thead = this._table.appendChild(document.createElement('thead'));
+    this._tbody = this._table.appendChild(document.createElement('tbody'));
+
+    // Footer
+    this._footer = this._el('div', 'dt-footer');
+    wrap.appendChild(this._footer);
+
+    this._renderHead();
+    this._render();
+  }
+
+  _renderHead() {
+    this._thead.innerHTML = '';
+    const tr = this._thead.appendChild(document.createElement('tr'));
+    this.cols.forEach(col => {
+      const th = tr.appendChild(document.createElement('th'));
+      const isSorted = this.sortKey === col.key;
+      const iconId   = isSorted ? (this.sortDir > 0 ? 'icon-sort-asc' : 'icon-sort-desc') : 'icon-sort';
+      const opacity  = isSorted ? '1' : '0.3';
+      th.innerHTML = `${col.label}<svg class="icon icon-sm" style="margin-left:6px;opacity:${opacity};vertical-align:middle"><use href="#${iconId}"/></svg>`;
+      th.addEventListener('click', () => this._sort(col.key));
+    });
+  }
+
+  _render() {
+    this._tbody.innerHTML = '';
+    const start = (this.page - 1) * this.perPage;
+    const slice = this.rows.slice(start, start + this.perPage);
+
+    if (slice.length === 0) {
+      const tr = this._tbody.appendChild(document.createElement('tr'));
+      const td = tr.appendChild(document.createElement('td'));
+      td.colSpan = this.cols.length;
+      td.className = 'dt-empty';
+      td.textContent = 'nothing found — try a different search.';
+    } else {
+      slice.forEach(row => {
+        const tr = this._tbody.appendChild(document.createElement('tr'));
+        this.cols.forEach(col => {
+          const td = tr.appendChild(document.createElement('td'));
+          td.innerHTML = col.render ? col.render(row[col.key]) : row[col.key];
+        });
+      });
+    }
+
+    this._renderInfo();
+    this._renderPager();
+  }
+
+  _renderInfo() {
+    const start = (this.page - 1) * this.perPage + 1;
+    const end   = Math.min(this.page * this.perPage, this.rows.length);
+    this._infoEl.textContent = this.rows.length === 0
+      ? '0 results'
+      : `${start}–${end} of ${this.rows.length}`;
+  }
+
+  _renderPager() {
+    this._footer.innerHTML = '';
+    const total = Math.ceil(this.rows.length / this.perPage);
+    if (total <= 1) return;
+
+    const prev = this._pageBtn('Prev', () => { this.page--; this._render(); });
+    prev.disabled = this.page === 1;
+    this._footer.appendChild(prev);
+
+    for (let i = 1; i <= total; i++) {
+      const b = this._pageBtn(i, () => { this.page = i; this._render(); });
+      if (i === this.page) b.classList.add('current');
+      this._footer.appendChild(b);
+    }
+
+    const next = this._pageBtn('Next', () => { this.page++; this._render(); });
+    next.disabled = this.page === total;
+    this._footer.appendChild(next);
+  }
+
+  _search(q) {
+    this.page = 1;
+    const lq  = q.trim().toLowerCase();
+    this.rows  = lq
+      ? this.all.filter(row => this.cols.some(c => String(row[c.key]).toLowerCase().includes(lq)))
+      : [...this.all];
+    this._render();
+  }
+
+  _sort(key) {
+    if (this.sortKey === key) this.sortDir *= -1;
+    else { this.sortKey = key; this.sortDir = 1; }
+    this.rows.sort((a, b) => {
+      const av = a[key], bv = b[key];
+      return (av < bv ? -1 : av > bv ? 1 : 0) * this.sortDir;
+    });
+    this._renderHead();
+    this._render();
+  }
+
+  _el(tag, cls, attrs) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (attrs) Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+    return node;
+  }
+
+  _pageBtn(label, fn) {
+    const b = this._el('button', 'dt-btn');
+    b.textContent = label;
+    b.onclick = fn;
+    return b;
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  drawDonut();
+  drawBar();
+  drawLine();
+  new SketchyTable('datatable', DT_DATA, DT_COLS, 6);
+});
+</script>
+
+</body>
+</html>
